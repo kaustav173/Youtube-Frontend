@@ -1,5 +1,4 @@
 import { useState } from "react";
-import * as Yup from "yup";
 import { useNavigate } from "react-router";
 // import { ToastContainer, toast } from "react-toastify";
 
@@ -28,7 +27,7 @@ function Login() {
   //     return;
   //   });
 
-  const handleChange = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     setFormData((prev) => ({

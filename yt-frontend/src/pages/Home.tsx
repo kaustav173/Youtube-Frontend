@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import SavedSearchIcon from "@mui/icons-material/SavedSearch";
 import { useState } from "react";
 import YouTubeIcon from "@mui/icons-material/YouTube";
+import type { Video } from "../types";
 
 function Home() {
   const { data, error, isPending } = useAllVideo();
@@ -15,17 +16,13 @@ function Home() {
   console.log("home", data);
 
   if (error) {
-    return <div>{error}</div>;
+    return <div>{error.message || "An error occurred"}</div>;
   }
 
   if (isPending) {
     return (
       <div className="flex items-center justify-center">is Fetching...</div>
     );
-  }
-
-  if (error) {
-    return <div>{error.message}</div>;
   }
 
   return (
@@ -58,7 +55,7 @@ function Home() {
         </div>
       </div>
       <ul className="grid grid-cols-4 py-10">
-        {data.map((video) => (
+        {data.map((video: Video) => (
           <Link to={`/video/${video.id}`}>
             <Card sx={{ maxWidth: 345 }} key={video.id}>
               <CardMedia
@@ -81,7 +78,7 @@ function Home() {
                 </Typography>
               </CardContent>
               <div className="flex flex-row gap-30 px-4 font-thin text-sm">
-                <span>{video.owner.name}</span>
+                <span>{video.owner?.name}</span>
                 <span>Category: {video.category}</span>
               </div>
               <CardActions></CardActions>

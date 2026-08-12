@@ -1,14 +1,11 @@
 import { Link, useParams } from "react-router";
 import { useAVideo } from "../hooks/useAVideo";
 import AllVideo from "../components/AllVideo";
-import Comments from "../components/Comments";
-import { useRef } from "react";
 
 function VideoPlay() {
-  const id = useParams();
-  const video = useRef(null);
+  const { id } = useParams<{ id: string }>();
   console.log(id);
-  const { data, isFetching } = useAVideo(id);
+  const { data, isFetching } = useAVideo(id ? { id } : { id: "" });
 
   if (isFetching) {
     return <div>is Fetching...</div>;

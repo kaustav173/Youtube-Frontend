@@ -5,13 +5,14 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import { Link } from "react-router";
 import Typography from "@mui/material/Typography";
+import type { Video } from "../types";
 
 function AllVideo() {
   const { data, error, isPending } = useAllVideo();
   console.log("home", data);
 
   if (error) {
-    return <div>{error}</div>;
+    return <div>{error.message || "An error occurred"}</div>;
   }
 
   if (isPending) {
@@ -21,7 +22,7 @@ function AllVideo() {
   return (
     <div className="px-2">
       <ul className="grid grid-cols-2">
-        {data.map((video) => (
+        {data.map((video: Video) => (
           <Link to={`/video/${video.id}`}>
             <Card sx={{ maxWidth: 345 }} key={video.id}>
               <CardMedia

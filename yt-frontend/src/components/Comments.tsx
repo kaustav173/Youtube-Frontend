@@ -1,6 +1,4 @@
-import React from "react";
-
-function Comments(iid) {
+function Comments(iid: string) {
   return <div className="mt-10">Comments {iid}</div>;
 }
 

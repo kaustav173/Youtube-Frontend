@@ -1,7 +1,7 @@
 const token = localStorage.getItem("token");
 
 let uploadId: string;
-let totalParts;
+let totalParts: number;
 
 export const initiateVideo = async (videoPath: string) => {
   try {
@@ -22,10 +22,10 @@ export const initiateVideo = async (videoPath: string) => {
     );
     const val = await res.json();
 
-    uploadId = val.data.uploadId;
-    totalParts = val.data.totalParts;
+    uploadId = val.data.uploadId as string;
+    totalParts = val.data.totalParts as number;
     for (let i = 1; i <= totalParts; i++) {
-      let final: boolean = MultiVideo(uploadId, i);
+      const final = await MultiVideo(uploadId, i);
       if (final) {
         continue;
       } else {
@@ -38,7 +38,7 @@ export const initiateVideo = async (videoPath: string) => {
   }
 };
 
-export const VideoComplete = async (id, n) => {
+export const VideoComplete = async (id: string, n: number) => {
   try {
     const res = await fetch(
       `https://yt-assesment.onrender.com/api/v1/uploads/videos/${id}/complete`,
@@ -87,7 +87,7 @@ export const MultiVideo = async (id: string, n: number) => {
     }
     const data = await res.json();
     if (data.success) {
-      return result;
+      return data;
     }
   } catch (error) {
     console.log(error);

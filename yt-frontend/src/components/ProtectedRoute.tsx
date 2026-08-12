@@ -3,7 +3,7 @@ import { Navigate, Outlet } from "react-router";
 function ProtectedRoute() {
   const token = localStorage.getItem("token");
   if (!token) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
   return <Outlet />;
 }

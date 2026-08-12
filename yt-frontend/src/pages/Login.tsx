@@ -1,6 +1,7 @@
 import { useState } from "react";
 import * as Yup from "yup";
 import { useNavigate } from "react-router";
+// import { ToastContainer, toast } from "react-toastify";
 
 // const validationSchema = Yup.object().shape({
 //   email: Yup.string()
@@ -13,17 +14,20 @@ import { useNavigate } from "react-router";
 
 function Login() {
   const navigate = useNavigate();
+  const [Loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  // let valid = useState(false);
   // validationSchema
   //   .validate(formData)
   //   .then((valid) => {
   //     console.log("Validation passed:", valid);
-  //     // valid = tr;
-  //   }
+  //   })
+  //   .catch(() => {
+  //     return;
+  //   });
+
   const handleChange = (e: React.FormEvent<HTMLFormElement>) => {
     const { name, value } = e.target;
 
@@ -35,8 +39,7 @@ function Login() {
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(e.target);
-    console.log(formData);
+    setLoading(true);
     try {
       const res: Response = await fetch(
         "https://yt-assesment.onrender.com/api/v1/auth/login",
@@ -60,10 +63,12 @@ function Login() {
       localStorage.setItem("token", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
       console.log("Login successfull");
-      console.log(data);
+      // notify();
+      setLoading(false);
       navigate("/home");
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -94,9 +99,13 @@ function Login() {
             required
           />
           <br></br>
-          <button type="submit" className="mt-2 border rounded-md px-3 py-2 ">
-            Submit
-          </button>
+          {Loading ? (
+            <p>is Loading ....</p>
+          ) : (
+            <button type="submit" className="mt-2 border rounded-md px-3 py-2 ">
+              Submit
+            </button>
+          )}
           {/* {valid} */}
         </form>
       </div>

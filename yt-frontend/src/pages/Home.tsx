@@ -3,13 +3,15 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
 import { Link } from "react-router";
 import Typography from "@mui/material/Typography";
-import Logout from "../components/Logout";
+import SavedSearchIcon from "@mui/icons-material/SavedSearch";
+import { useState } from "react";
+import YouTubeIcon from "@mui/icons-material/YouTube";
 
 function Home() {
   const { data, error, isPending } = useAllVideo();
+  const [search, setSearch] = useState("");
   console.log("home", data);
 
   if (error) {
@@ -17,52 +19,74 @@ function Home() {
   }
 
   if (isPending) {
-    return <div>is Fetching...</div>;
+    return (
+      <div className="flex items-center justify-center">is Fetching...</div>
+    );
+  }
+
+  if (error) {
+    return <div>{error.message}</div>;
   }
 
   return (
     <div className="px-3 py-2">
-      <div className="flex flex-col">
-        <span className="font-bold text-5xl px-10">Youtube</span>
-      </div>
-      <div className="ml-5 w-full flex items-center justify-center p-4">
-        <input type="text" className="border w-full " />
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex shrink-0 items-center">
+          <YouTubeIcon />
+          <span className="text-2xl font-bold ml-2">YouTube</span>
+        </div>
+
+        <div className="flex w-full max-w-2xl">
+          <input
+            type="text"
+            placeholder="Search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="h-11 w-full rounded-l-full border px-5 text-base "
+          />
+
+          <Link
+            to={`/home/${search}`}
+            className="flex h-11 w-16  items-center justify-center rounded-r-full border border-1"
+          >
+            <SavedSearchIcon />
+          </Link>
+        </div>
+
+        <div className="hidden h-10 w-10  items-center justify-center rounded-full border md:flex">
+          <Link to="/profile">P</Link>
+        </div>
       </div>
       <ul className="grid grid-cols-4 py-10">
         {data.map((video) => (
-          <Card sx={{ maxWidth: 345 }} key={video.id}>
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              height="140"
-              image={
-                `https://test-dev-sena.s3.ap-south-1.amazonaws.com/` +
-                video.thumbnailKey
-              }
-            />
+          <Link to={`/video/${video.id}`}>
+            <Card sx={{ maxWidth: 345 }} key={video.id}>
+              <CardMedia
+                component="img"
+                alt="green iguana"
+                height="140"
+                image={
+                  `https://test-dev-sena.s3.ap-south-1.amazonaws.com/` +
+                  video.thumbnailKey
+                }
+                className="border rounded-2xl"
+              />
 
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                {video.title}
-              </Typography>
-              <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                {video.description}
-              </Typography>
-            </CardContent>
-            <div className="flex flex-row gap-30 px-4 font-thin text-sm">
-              <span>{video.owner.name}</span>
-              <span>Category: {video.category}</span>
-            </div>
-            <CardActions>
-              <Link
-                to={`/video/${video.id}`}
-                className="border border-1 rounded-lg px-1 bg-emerald-500"
-              >
-                Play the Video
-              </Link>
-              <Button size="small"></Button>
-            </CardActions>
-          </Card>
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  {video.title}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  {video.description}
+                </Typography>
+              </CardContent>
+              <div className="flex flex-row gap-30 px-4 font-thin text-sm">
+                <span>{video.owner.name}</span>
+                <span>Category: {video.category}</span>
+              </div>
+              <CardActions></CardActions>
+            </Card>
+          </Link>
         ))}
       </ul>
     </div>

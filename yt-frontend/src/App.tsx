@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router";
 import VideoPlay from "./pages/VideoPlay";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
+import SearchPage from "./pages/SearchPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/video/:id" element={<VideoPlay />} />
+        <Route path="/home/:text" element={<SearchPage />} />
       </Route>
     </Routes>
   );

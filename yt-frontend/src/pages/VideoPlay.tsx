@@ -2,20 +2,26 @@ import { Link, useParams } from "react-router";
 import { useAVideo } from "../hooks/useAVideo";
 import AllVideo from "../components/AllVideo";
 import Comments from "../components/Comments";
+import { useRef } from "react";
 
 function VideoPlay() {
   const id = useParams();
+  const video = useRef(null);
   console.log(id);
   const { data, isFetching } = useAVideo(id);
 
   if (isFetching) {
-    return <div>is Fetching</div>;
+    return <div>is Fetching...</div>;
   }
+
+  const handlePip = () => {};
 
   return (
     <>
       <div className="flex flex-row gap-350 mb-10 mt-5 text-2xl font-bold px-3">
-        <span>Welcome to Youtube</span>
+        <Link to="/home">
+          <span>Welcome to Youtube</span>
+        </Link>
         <Link to="/profile">My Profile</Link>
       </div>
       <div className="grid grid-cols-2 px-3">
@@ -30,6 +36,7 @@ function VideoPlay() {
               type="video/mp4"
             />
           </video>
+          <button onChange={handlePip}>Toogle Piip</button>
           <div className="flex flex-col gap-4">
             <span className="border rounded-md px-3 py-2 font-bold text-3xl">
               {data.title}

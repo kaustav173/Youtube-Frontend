@@ -1,4 +1,8 @@
-export const login = async (info) => {
+interface Info {
+  email: "string";
+  password: "string";
+}
+export const login = async (info: Info) => {
   try {
     const res: Response = await fetch(
       "https://yt-assesment.onrender.com/api/v1/auth/login",
@@ -40,6 +44,10 @@ export const profile = async () => {
     return data.data;
   } catch (error) {
     console.log(error);
-    // return null;
+    return null;
   }
 };
+
+export function logout() {
+  localStorage.removeItem("token");
+}

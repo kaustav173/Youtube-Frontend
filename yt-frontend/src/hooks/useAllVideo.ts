@@ -3,7 +3,7 @@ import { Allvideo } from "../api/videofetch";
 
 export function useAllVideo() {
   return useQuery({
-    queryKey: ["users"],
+    queryKey: ["videos"],
     queryFn: Allvideo,
   });
 }

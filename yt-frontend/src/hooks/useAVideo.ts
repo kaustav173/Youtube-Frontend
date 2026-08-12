@@ -6,7 +6,7 @@ interface IID {
 }
 export function useAVideo(id: IID) {
   return useQuery({
-    queryKey: ["users", id],
+    queryKey: ["video", id],
     queryFn: () => GetAvideo(id),
     enabled: !!id,
   });

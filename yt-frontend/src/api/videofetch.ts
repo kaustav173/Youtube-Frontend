@@ -11,7 +11,6 @@ export const Allvideo = async () => {
       },
     );
     const data = await res.json();
-    console.log(data);
     return data.data;
   } catch (error) {
     console.log(error);
@@ -19,6 +18,25 @@ export const Allvideo = async () => {
   }
 };
 
-export const GetAvideo = async () => {
-  // const
+interface IID {
+  id: string;
+}
+
+export const GetAvideo = async (id: IID) => {
+  const token = localStorage.getItem("token");
+  try {
+    const res = await fetch(
+      `https://yt-assesment.onrender.com/api/v1/videos/${id.id}`,
+      {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    const data = await res.json();
+    return data.data;
+  } catch (error) {
+    console.log(error);
+  }
 };

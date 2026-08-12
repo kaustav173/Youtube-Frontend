@@ -6,9 +6,8 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import { Link } from "react-router";
 import Typography from "@mui/material/Typography";
-import Logout from "../components/Logout";
 
-function Home() {
+function AllVideo() {
   const { data, error, isPending } = useAllVideo();
   console.log("home", data);
 
@@ -17,18 +16,12 @@ function Home() {
   }
 
   if (isPending) {
-    return <div>is Fetching...</div>;
+    return <div>is Fetching</div>;
   }
 
   return (
-    <div className="px-3 py-2">
-      <div className="flex flex-col">
-        <span className="font-bold text-5xl px-10">Youtube</span>
-      </div>
-      <div className="ml-5 w-full flex items-center justify-center p-4">
-        <input type="text" className="border w-full " />
-      </div>
-      <ul className="grid grid-cols-4 py-10">
+    <div className="px-2">
+      <ul className="grid grid-cols-2">
         {data.map((video) => (
           <Card sx={{ maxWidth: 345 }} key={video.id}>
             <CardMedia
@@ -49,10 +42,6 @@ function Home() {
                 {video.description}
               </Typography>
             </CardContent>
-            <div className="flex flex-row gap-30 px-4 font-thin text-sm">
-              <span>{video.owner.name}</span>
-              <span>Category: {video.category}</span>
-            </div>
             <CardActions>
               <Link
                 to={`/video/${video.id}`}
@@ -69,4 +58,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default AllVideo;

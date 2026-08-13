@@ -6,8 +6,10 @@ import CardMedia from "@mui/material/CardMedia";
 import { Link } from "react-router";
 import Typography from "@mui/material/Typography";
 import SavedSearchIcon from "@mui/icons-material/SavedSearch";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import YouTubeIcon from "@mui/icons-material/YouTube";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 
 interface Video {
   id: string;
@@ -22,19 +24,44 @@ interface Video {
 }
 
 function Home() {
-  const { data, error, isPending } = useAllVideo();
+  // const { data, error, isPending } = useAllVideo();
+  const [data, setVideos] = useState([]);
   const [search, setSearch] = useState("");
-  console.log("home", data);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
 
-  if (error) {
-    return <div>{error.message}</div>;
-  }
+  useEffect(() => {
+    const fetchVideos = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const res = await fetch(
+          `https://yt-assesment.onrender.com/api/v1/videos?page=${currentPage}&limit=20`,
+          {
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        const data = await res.json();
+        setVideos(data.data);
+        setCurrentPage(data.meta.page);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchVideos();
+  }, [currentPage]);
 
-  if (isPending) {
-    return (
-      <div className="flex items-center justify-center">is Fetching...</div>
-    );
-  }
+  // if (error) {
+  //   return <div>{error.message}</div>;
+  // }
+
+  // if (isPending) {
+  //   return (
+  //     <div className="flex items-center justify-center">is Fetching...</div>
+  //   );
+  // }
 
   return (
     <div className="px-3 py-2">
@@ -64,6 +91,17 @@ function Home() {
         <div className="hidden h-10 w-10  items-center justify-center rounded-full border md:flex">
           <Link to="/profile">P</Link>
         </div>
+      </div>
+      <div className="flex flex-col mt-5 mb-10 items-center">
+        {/* <Stack spacing={2}>
+          <Pagination
+            count={3}
+            color="primary"
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+          />
+        </Stack> */}
+        <button onClick={() => setCurrentPage((prev) => prev - 1)}>Back</button>
+        <button onClick={() => setCurrentPage((prev) => prev + 1)}>Next</button>
       </div>
       <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 py-4 ">
         {data.map((video: Video) => (

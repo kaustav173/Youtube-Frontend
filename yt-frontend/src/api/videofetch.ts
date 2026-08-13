@@ -57,7 +57,8 @@ export const GetMyVideo = async () => {
         },
       },
     );
-    console.log(data);
+
+    console.log("my video", data.data.data);
     return data;
   } catch (error) {
     console.error(error);

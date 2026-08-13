@@ -17,6 +17,7 @@ function Login() {
     email: Yup.string()
       .email("Please enter a valid email address")
       .required("Email is required"),
+    password: Yup.string().required("Password is required"),
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,15 +37,20 @@ function Login() {
     e.preventDefault();
 
     try {
-      await validationSchema.validate(
-        { email: formData.email },
-        { abortEarly: false },
-      );
+      await validationSchema.validate(formData, {
+        abortEarly: false,
+      });
 
       setEmailError("");
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
-        setEmailError(error.errors[0]);
+        const emailValidationError = error.inner.find(
+          (err) => err.path === "email",
+        );
+
+        if (emailValidationError) {
+          setEmailError(emailValidationError.message);
+        }
       }
 
       return;
@@ -53,7 +59,7 @@ function Login() {
     setLoading(true);
 
     try {
-      const res: Response = await fetch(
+      const res = await fetch(
         "https://yt-assesment.onrender.com/api/v1/auth/login",
         {
           method: "POST",
@@ -68,27 +74,91 @@ function Login() {
         },
       );
 
-      console.log(res);
       if (!res.ok) {
-        // console.log(res);
         throw new Error("Invalid credentials");
       }
 
       const { data } = await res.json();
 
-      console.log(data);
-
       localStorage.setItem("token", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
 
-      console.log("Login successful");
-
-      setLoading(false);
       navigate("/home");
     } catch (error) {
       console.log(error);
+    } finally {
       setLoading(false);
     }
+  };
+
+  const refreshAccessToken = async (): Promise<string> => {
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    if (!refreshToken) {
+      throw new Error("Refresh token not found");
+    }
+
+    const res = await fetch(
+      "https://yt-assesment.onrender.com/api/v1/auth/refresh",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          refreshToken,
+        }),
+      },
+    );
+
+    if (!res.ok) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+      throw new Error("Refresh token expired or revoked");
+    }
+
+    const { data } = await res.json();
+
+    localStorage.setItem("token", data.accessToken);
+
+    if (data.refreshToken) {
+      localStorage.setItem("refreshToken", data.refreshToken);
+    }
+
+    return data.accessToken;
+  };
+
+  const apiFetch = async (url, options = {}) => {
+    let accessToken = localStorage.getItem("token");
+
+    const makeRequest = async (token: string | null) => {
+      return fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    };
+
+    let res = await makeRequest(accessToken);
+
+    if (res.status === 401) {
+      try {
+        accessToken = await refreshAccessToken();
+        res = await makeRequest(accessToken);
+      } catch (error) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        navigate("/login");
+        throw error;
+      }
+    }
+
+    return res;
   };
 
   return (
@@ -110,23 +180,21 @@ function Login() {
             className="border rounded-md px-3 py-2"
           />
 
-          {emailError && <p className="text-sm">{emailError}</p>}
-
-          <br />
+          {emailError && <p className="text-sm text-red-500">{emailError}</p>}
 
           <label className="font-medium">Enter your password:</label>
 
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className="border rounded-md px-3 py-2"
-            placeholder="enter your password"
-            required
-          />
-
-          <br />
+          <div className="relative">
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="border rounded-md px-3 py-2 w-full"
+              placeholder="enter your password"
+              required
+            />
+          </div>
 
           {Loading ? (
             <p className="text-center">is Loading ....</p>

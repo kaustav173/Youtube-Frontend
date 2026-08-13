@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router";
 import { useAVideo } from "../hooks/useAVideo";
 import AllVideo from "../components/AllVideo";
-import Comments from "../components/Comments";
+// import Comments from "../components/Comments";
 import { useRef } from "react";
 
 function VideoPlay() {

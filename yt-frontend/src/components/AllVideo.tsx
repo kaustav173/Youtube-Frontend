@@ -11,7 +11,7 @@ function AllVideo() {
   console.log("home", data);
 
   if (error) {
-    return <div>{error}</div>;
+    return <div>{error.message}</div>;
   }
 
   if (isPending) {

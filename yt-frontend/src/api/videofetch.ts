@@ -11,6 +11,7 @@ export const Allvideo = async () => {
       },
     );
     const data = await res.json();
+    console.log(data);
     return data.data;
   } catch (error) {
     console.log(error);
@@ -38,5 +39,53 @@ export const GetAvideo = async (id: IID) => {
     return data.data;
   } catch (error) {
     console.log(error);
+  }
+};
+
+import axios from "axios";
+
+const token = localStorage.getItem("token");
+
+export const GetMyVideo = async () => {
+  try {
+    const { data } = await axios.get(
+      "https://yt-assesment.onrender.com/api/v1/videos/mine",
+      {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+interface IText {
+  text: string;
+}
+
+export const SearchVideo = async (text: IText) => {
+  try {
+    console.log(token);
+    const { data } = await axios.get(
+      "https://yt-assesment.onrender.com/api/v1/videos",
+      {
+        params: {
+          search: text,
+        },
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token} `,
+        },
+      },
+    );
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error(error);
   }
 };

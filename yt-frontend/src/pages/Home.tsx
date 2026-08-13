@@ -9,23 +9,31 @@ import SavedSearchIcon from "@mui/icons-material/SavedSearch";
 import { useState } from "react";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 
+interface Video {
+  id: string;
+  title: string;
+  description: string;
+  thumbnailKey: string;
+  videoKey?: string;
+  category?: string;
+  owner?: {
+    name: string;
+  };
+}
+
 function Home() {
   const { data, error, isPending } = useAllVideo();
   const [search, setSearch] = useState("");
   console.log("home", data);
 
   if (error) {
-    return <div>{error}</div>;
+    return <div>{error.message}</div>;
   }
 
   if (isPending) {
     return (
       <div className="flex items-center justify-center">is Fetching...</div>
     );
-  }
-
-  if (error) {
-    return <div>{error.message}</div>;
   }
 
   return (
@@ -46,8 +54,8 @@ function Home() {
           />
 
           <Link
-            to={`/home/${search}`}
-            className="flex h-11 w-16  items-center justify-center rounded-r-full border border-1"
+            to={`/search/${search}`}
+            className="flex h-11 w-16  items-center justify-center rounded-r-full border"
           >
             <SavedSearchIcon />
           </Link>
@@ -57,8 +65,8 @@ function Home() {
           <Link to="/profile">P</Link>
         </div>
       </div>
-      <ul className="grid grid-cols-4 py-10">
-        {data.map((video) => (
+      <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 py-4 ">
+        {data.map((video: Video) => (
           <Link to={`/video/${video.id}`}>
             <Card sx={{ maxWidth: 345 }} key={video.id}>
               <CardMedia
@@ -81,7 +89,7 @@ function Home() {
                 </Typography>
               </CardContent>
               <div className="flex flex-row gap-30 px-4 font-thin text-sm">
-                <span>{video.owner.name}</span>
+                <span>{video.owner?.name}</span>
                 <span>Category: {video.category}</span>
               </div>
               <CardActions></CardActions>

@@ -3,10 +3,10 @@ import { useProfile } from "../hooks/useProfile";
 import { logout } from "../api/auth";
 import { Link } from "react-router";
 import UploadFile from "../components/UploadFile";
+import MyVideo from "../components/MyVideo";
 
 function Profile() {
   const navigate = useNavigate();
-
   const { data, isLoading } = useProfile();
 
   const handleLogout = () => {
@@ -23,8 +23,8 @@ function Profile() {
   }
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-xl mx-auto border rounded-lg p-6">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 py-4 ">
+      <div className="ml-5 border rounded-lg p-6 mt-12">
         <div className="flex items-center justify-between mb-6">
           <Link to="/home" className="border rounded-md px-4 py-2">
             Back
@@ -53,6 +53,10 @@ function Profile() {
           </div>
           <UploadFile />
         </div>
+      </div>
+      <div>
+        <h1>My Uploaded Videos</h1>
+        <MyVideo />
       </div>
     </div>
   );

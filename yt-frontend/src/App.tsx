@@ -15,7 +15,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/video/:id" element={<VideoPlay />} />
-        <Route path="/home/:text" element={<SearchPage />} />
+        <Route path="/search/:text" element={<SearchPage />} />
       </Route>
     </Routes>
   );

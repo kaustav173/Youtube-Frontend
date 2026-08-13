@@ -64,11 +64,7 @@ export const GetMyVideo = async () => {
   }
 };
 
-interface IText {
-  text: string;
-}
-
-export const SearchVideo = async (text: IText) => {
+export const SearchVideo = async (text: string) => {
   try {
     console.log(token);
     const { data } = await axios.get(

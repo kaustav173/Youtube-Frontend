@@ -2,13 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 
 import { SearchVideo } from "../api/videofetch";
 
-interface IText {
-  text: string;
-}
-
-export function useSearchVideo(text: IText) {
+export function useSearchVideo(text: string | undefined) {
   return useQuery({
-    queryKey: ["search"],
-    queryFn: () => SearchVideo(text),
+    queryKey: ["search", text],
+    queryFn: () => SearchVideo(text!),
+    enabled: !!text,
   });
 }

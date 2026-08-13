@@ -7,6 +7,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { Link } from "react-router";
+import YouTubeIcon from "@mui/icons-material/YouTube";
 
 interface Video {
   id: string;
@@ -23,10 +24,24 @@ interface Video {
 function SearchPage() {
   const { text } = useParams();
   const { data } = useSearchVideo(text);
-  console.log(data.data);
+  console.log(data);
 
   return (
-    <div>
+    <div className="px-3 py-2">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex shrink-0 items-center">
+          <YouTubeIcon />
+          <span className="text-2xl font-bold ml-2">YouTube</span>
+        </div>
+
+        <div className="flex w-full max-w-2xl text-2xl">
+          Search Results :- {text}
+        </div>
+
+        <div className="hidden h-10 w-10  items-center justify-center rounded-full border md:flex">
+          <Link to="/profile">P</Link>
+        </div>
+      </div>
       <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 py-4 ">
         {data?.data.map((video: Video) => (
           <Link to={`/video/${video.id}`}>

@@ -54,7 +54,7 @@ function Profile() {
           <UploadFile />
         </div>
       </div>
-      <div>
+      <div className=" mt-12 rounded-lg p-6 ml-5 mr-5">
         <h1>My Uploaded Videos</h1>
         <MyVideo />
       </div>

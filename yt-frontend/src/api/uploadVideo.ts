@@ -1,11 +1,18 @@
 const token = localStorage.getItem("token");
 
-let uploadId: string;
-let totalParts;
+const CHUNK_SIZE = 5 * 1024 * 1024;
 
-export const initiateVideo = async (videoPath: string) => {
+export const initiateVideo = async (file: File) => {
+  const fileName = file.name;
+  const fileType = file.type;
+  const fileSize = file.size;
+  let uploadId = "";
+  let parts = [];
+  setTimeout(() => {
+    console.log("initiating");
+  }, 3000);
   try {
-    const res = await fetch(
+    const startUploadResponse = await fetch(
       "https://yt-assesment.onrender.com/api/v1/uploads/videos/initiate",
       {
         method: "POST",
@@ -14,81 +21,83 @@ export const initiateVideo = async (videoPath: string) => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          fileName: videoPath,
-          fileSize: 1,
-          contentType: "video/mp4",
+          fileName,
+          fileSize,
+          contentType: fileType,
         }),
       },
     );
-    const val = await res.json();
-
+    const val = await startUploadResponse.json();
     uploadId = val.data.uploadId;
-    totalParts = val.data.totalParts;
-    for (let i = 1; i <= totalParts; i++) {
-      let final: boolean = MultiVideo(uploadId, i);
-      if (final) {
-        continue;
-      } else {
-        return false;
-      }
-    }
-    return true;
-  } catch (error) {
-    console.log(error);
-  }
-};
+    const totalParts = val.data.totalParts;
 
-export const VideoComplete = async (id, n) => {
-  try {
-    const res = await fetch(
-      `https://yt-assesment.onrender.com/api/v1/uploads/videos/${id}/complete`,
+    console.log(totalParts);
+
+    for (let partNumber = 1; partNumber <= totalParts; partNumber++) {
+      const start = (partNumber - 1) * CHUNK_SIZE;
+      const end = Math.min(start + CHUNK_SIZE, file.size);
+      const fileChunk = file.slice(start, end);
+
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(fileChunk);
+
+      const uploadPart = () => {
+        return new Promise((resolve, reject) => {
+          reader.onload = async () => {
+            // const fileChunkBase64 = btoa(
+            //   new Uint8Array(reader.result).reduce(
+            //     (data, byte) => data + String.fromCharCode(byte),
+            //     "",
+            //   ),
+            // );
+
+            const res = await fetch(
+              `https://yt-assesment.onrender.com/api/v1/uploads/videos/${uploadId}/parts/presign`,
+              {
+                method: "POST",
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  partNumber,
+                }),
+              },
+            );
+
+            const uploadPartResponse = await res.json();
+
+            parts.push({
+              ETag: uploadPartResponse.data.ETag,
+              PartNumber: partNumber,
+            });
+            resolve();
+          };
+          reader.onerror = reject;
+        });
+      };
+
+      await uploadPart();
+    }
+
+    const completeUploadResponse = await fetch(
+      `https://yt-assesment.onrender.com/api/v1/uploads/videos/${uploadId}/complete`,
       {
         method: "POST",
         headers: {
+          Accept: "application/json",
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          parts: [
-            {
-              partNumber: n,
-              eTag: "",
-            },
-          ],
+          parts,
         }),
       },
     );
-    const data = await res.json();
-    if (data.success) {
-      return true;
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-export const MultiVideo = async (id: string, n: number) => {
-  try {
-    const res = await fetch(
-      `https://yt-assesment.onrender.com/api/v1/uploads/videos/${id}/parts/presign`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          partNumbers: [n],
-        }),
-      },
-    );
-    if (!res.ok) {
-      return Error;
-    }
-    const data = await res.json();
-    if (data.success) {
-      return result;
-    }
+    const data = await completeUploadResponse.json();
+    alert("File uploaded successfully");
+    return data.data.fileUrl;
   } catch (error) {
     console.log(error);
   }

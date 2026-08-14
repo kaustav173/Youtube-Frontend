@@ -1,8 +1,12 @@
-export const Allvideo = async () => {
+interface IID {
+  id: string;
+}
+export const Allvideo = async (id: IID) => {
   const token = localStorage.getItem("token");
   try {
+    console.log(id.id);
     const res: Response = await fetch(
-      "https://yt-assesment.onrender.com/api/v1/videos",
+      `https://yt-assesment.onrender.com/api/v1/videos/${id}/recommended`,
       {
         headers: {
           Accept: "application/json",
@@ -11,17 +15,13 @@ export const Allvideo = async () => {
       },
     );
     const data = await res.json();
-    console.log(data);
+    console.log("recomm : ", data);
     return data.data;
   } catch (error) {
     console.log(error);
     return null;
   }
 };
-
-interface IID {
-  id: string;
-}
 
 export const GetAvideo = async (id: IID) => {
   const token = localStorage.getItem("token");
@@ -84,5 +84,28 @@ export const SearchVideo = async (text: string) => {
     return data;
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const DeleteVideo = async (id: IID) => {
+  const token = localStorage.getItem("token");
+  try {
+    const res = await fetch(
+      `https://yt-assesment.onrender.com/api/v1/videos/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    if (!res.ok) {
+      throw new Error("Issuee");
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.log(error);
   }
 };

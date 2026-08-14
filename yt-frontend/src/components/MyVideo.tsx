@@ -5,6 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import { Link } from "react-router";
 import Typography from "@mui/material/Typography";
+import { useDeleteVideo } from "../hooks/useDeleteVideos";
 
 interface Video {
   id: string;
@@ -20,23 +21,26 @@ interface Video {
 
 function MyVideo() {
   const { data, isFetching, error } = useMyVideo();
+  const mutation = useDeleteVideo(id);
   if (isFetching) {
     return <div>is Fetching ....</div>;
   }
 
-  console.log(data.data);
-
   if (error) {
     return <div>{error.message}</div>;
   }
-  console.log("my video", data);
+
+  const handleDelete = async (id: string) => {
+    mutation.mutate(id);
+  };
+
   return (
     <div>
       <span className="text-2xl font-bold mb-4">My Video</span>
       <div className="mt-10 grid grid-cols-2 gap-6">
         {data.data.map((video: Video) => (
-          <Link to={`/video/${video.id}`}>
-            <Card sx={{ maxWidth: 345 }} key={video.id}>
+          <Card sx={{ maxWidth: 345 }} key={video.id}>
+            <Link to={`/video/${video.id}`}>
               <CardMedia
                 component="img"
                 alt="green iguana"
@@ -60,9 +64,16 @@ function MyVideo() {
                 <span>{video.owner?.name}</span>
                 <span>Category: {video.category}</span>
               </div>
-              <CardActions></CardActions>
-            </Card>
-          </Link>
+            </Link>
+            <CardActions>
+              <button
+                onClick={() => handleDelete(video.id)}
+                className="text-white border bg-red-500 px-2 rounded-lg cursor-pointer"
+              >
+                Delete
+              </button>
+            </CardActions>
+          </Card>
         ))}
       </div>
     </div>

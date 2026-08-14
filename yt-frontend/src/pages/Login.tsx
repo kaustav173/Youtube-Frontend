@@ -89,6 +89,7 @@ function Login() {
         const data1 = await res.json();
         console.log(data1.error.message);
         setError(data1.error.message);
+
         throw new Error("Invalid credentials");
       }
 
@@ -242,7 +243,7 @@ function Login() {
               className="flex justify-around items-center"
               onClick={handleToggle}
             >
-              👁️
+              {type === "password" ? "👁️" : "🙈"}
             </button>
           </div>
           {error.length === 0 ? (
@@ -251,7 +252,7 @@ function Login() {
             <p className=" text-red-500">{error}</p>
           )}
           {Loading ? (
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center animate-spin">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 x="0px"
@@ -264,7 +265,11 @@ function Login() {
               </svg>
             </div>
           ) : (
-            <button type="submit" className="mt-2 border rounded-md px-3 py-2">
+            <button
+              type="submit"
+              className="mt-2 border rounded-md px-3 py-2
+            bg-emerald-300"
+            >
               Submit
             </button>
           )}

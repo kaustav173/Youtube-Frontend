@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router";
 import { useAVideo } from "../hooks/useAVideo";
 import AllVideo from "../components/AllVideo";
 import { useEffect, useRef, useState } from "react";
+import Header from "../components/Header";
 
 function VideoPlay() {
   const id = useParams();
@@ -74,16 +75,12 @@ function VideoPlay() {
 
   return (
     <>
-      <div className="flex flex-row justify-between mb-10 mt-5 text-2xl font-bold px-3">
-        <Link to="/home">
-          <span>Welcome to Youtube</span>
-        </Link>
-
-        <Link to="/profile">My Profile</Link>
+      <div className="px-3 py-3">
+        <Header />
       </div>
 
-      <div className="grid grid-cols-2 px-3 gap-5">
-        <div>
+      <div className="grid grid-cols-2 px-3 gap-5 mt-6 justify-center">
+        <div className="overflow-hidden h-scrren">
           <video
             ref={videoRef}
             controls
@@ -101,7 +98,7 @@ function VideoPlay() {
           </div>
         </div>
 
-        <div>
+        <div className="overflow-y-auto h-screen [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <AllVideo />
         </div>
       </div>

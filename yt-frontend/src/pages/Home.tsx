@@ -2,10 +2,9 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import SavedSearchIcon from "@mui/icons-material/SavedSearch";
-import YouTubeIcon from "@mui/icons-material/YouTube";
 import { Link } from "react-router";
 import { useEffect, useState } from "react";
+import Header from "../components/Header";
 
 interface Video {
   id: string;
@@ -21,7 +20,6 @@ interface Video {
 
 function Home() {
   const [data, setVideos] = useState<Video[]>([]);
-  const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
 
@@ -70,7 +68,7 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-white px-3 py-3 sm:px-5">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      {/* <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex shrink-0 items-center">
           <YouTubeIcon
             sx={{
@@ -103,23 +101,27 @@ function Home() {
         <div className="hidden h-10 w-10 items-center justify-center rounded-full bg-gray-200 font-semibold md:flex">
           <Link to="/profile">P</Link>
         </div>
-      </div>
+      </div> */}
+      <Header />
 
       <div className="mt-6 flex items-center justify-center gap-4">
         <button
           onClick={handlePrev}
           disabled={currentPage === 1}
-          className="rounded-full border px-5 py-2 text-sm font-medium"
+          className={`rounded-full border px-5 py-2 text-sm font-medium cursor-pointer ${currentPage == 1 ? "blur" : ""}`}
         >
           Back
         </button>
-
+        <p>
+          {currentPage} of {totalPage}
+        </p>
         <button
           onClick={handleNext}
-          className={`rounded-full border px-5 py-2 text-sm font-medium transition `}
+          className={`rounded-full border px-5 py-2 text-sm font-medium transition cursor-pointer ${currentPage == totalPage ? "blur" : ""}`}
         >
           Next
         </button>
+        <p className="text-sm font-thin">Total 20 videos per page</p>
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

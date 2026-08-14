@@ -5,10 +5,11 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import { Link } from "react-router";
 import Typography from "@mui/material/Typography";
+import { useParams } from "react-router";
 
 function AllVideo() {
-  const { data, error, isPending } = useAllVideo();
-  console.log("home", data);
+  const id = useParams();
+  const { data, error, isPending } = useAllVideo(id.id);
 
   if (error) {
     return <div>{error.message}</div>;
@@ -20,6 +21,7 @@ function AllVideo() {
 
   return (
     <div className="px-2">
+      <h1 className="text-2xl font-bold  mb-4">Recommended Videos</h1>
       <ul className="grid grid-cols-2">
         {data.map((video) => (
           <Link to={`/video/${video.id}`}>

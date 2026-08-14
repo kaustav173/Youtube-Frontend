@@ -33,7 +33,7 @@ function MyVideo() {
   return (
     <div>
       <span className="text-2xl font-bold mb-4">My Video</span>
-      <div className="mt-10">
+      <div className="mt-10 grid grid-cols-2 gap-6">
         {data.data.map((video: Video) => (
           <Link to={`/video/${video.id}`}>
             <Card sx={{ maxWidth: 345 }} key={video.id}>

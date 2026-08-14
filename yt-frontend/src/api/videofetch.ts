@@ -44,9 +44,8 @@ export const GetAvideo = async (id: IID) => {
 
 import axios from "axios";
 
-const token = localStorage.getItem("token");
-
 export const GetMyVideo = async () => {
+  const token = localStorage.getItem("token");
   try {
     const { data } = await axios.get(
       "https://yt-assesment.onrender.com/api/v1/videos/mine",
@@ -66,6 +65,7 @@ export const GetMyVideo = async () => {
 };
 
 export const SearchVideo = async (text: string) => {
+  const token = localStorage.getItem("token");
   try {
     console.log(token);
     const { data } = await axios.get(

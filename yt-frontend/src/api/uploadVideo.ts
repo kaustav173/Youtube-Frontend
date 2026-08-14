@@ -1,8 +1,7 @@
-const token = localStorage.getItem("token");
-
 const CHUNK_SIZE = 5 * 1024 * 1024;
 
 export const initiateVideo = async (file: File) => {
+  const token = localStorage.getItem("token");
   const fileName = file.name;
   const fileType = file.type;
   const fileSize = file.size;
@@ -44,13 +43,6 @@ export const initiateVideo = async (file: File) => {
       const uploadPart = () => {
         return new Promise((resolve, reject) => {
           reader.onload = async () => {
-            // const fileChunkBase64 = btoa(
-            //   new Uint8Array(reader.result).reduce(
-            //     (data, byte) => data + String.fromCharCode(byte),
-            //     "",
-            //   ),
-            // );
-
             const res = await fetch(
               `https://yt-assesment.onrender.com/api/v1/uploads/videos/${uploadId}/parts/presign`,
               {

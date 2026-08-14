@@ -1,15 +1,11 @@
-import { useAllVideo } from "../hooks/useAllVideo";
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import { Link } from "react-router";
 import Typography from "@mui/material/Typography";
 import SavedSearchIcon from "@mui/icons-material/SavedSearch";
-import { useEffect, useState } from "react";
 import YouTubeIcon from "@mui/icons-material/YouTube";
-import Pagination from "@mui/material/Pagination";
-import Stack from "@mui/material/Stack";
+import { Link } from "react-router";
+import { useEffect, useState } from "react";
 
 interface Video {
   id: string;
@@ -24,8 +20,7 @@ interface Video {
 }
 
 function Home() {
-  // const { data, error, isPending } = useAllVideo();
-  const [data, setVideos] = useState([]);
+  const [data, setVideos] = useState<Video[]>([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
@@ -33,6 +28,7 @@ function Home() {
   useEffect(() => {
     const fetchVideos = async () => {
       const token = localStorage.getItem("token");
+
       try {
         const res = await fetch(
           `https://yt-assesment.onrender.com/api/v1/videos?page=${currentPage}&limit=20`,
@@ -43,32 +39,48 @@ function Home() {
             },
           },
         );
-        const data = await res.json();
-        setVideos(data.data);
-        setCurrentPage(data.meta.page);
+
+        const response = await res.json();
+
+        setVideos(response.data);
+
+        if (response.meta) {
+          setCurrentPage(response.meta.page);
+          setTotalPage(response.meta.totalPages || 1);
+        }
       } catch (error) {
         console.log(error);
       }
     };
+
     fetchVideos();
   }, [currentPage]);
 
-  // if (error) {
-  //   return <div>{error.message}</div>;
-  // }
+  const handlePrev = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
 
-  // if (isPending) {
-  //   return (
-  //     <div className="flex items-center justify-center">is Fetching...</div>
-  //   );
-  // }
+  const handleNext = () => {
+    if (currentPage < totalPage) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
 
   return (
-    <div className="px-3 py-2">
-      <div className="flex items-center justify-between gap-4">
+    <div className="min-h-screen bg-white px-3 py-3 sm:px-5">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex shrink-0 items-center">
-          <YouTubeIcon />
-          <span className="text-2xl font-bold ml-2">YouTube</span>
+          <YouTubeIcon
+            sx={{
+              color: "#ff0000",
+              fontSize: 36,
+            }}
+          />
+          <span className="ml-2 text-2xl font-bold tracking-tight">
+            YouTube
+          </span>
         </div>
 
         <div className="flex w-full max-w-2xl">
@@ -77,64 +89,108 @@ function Home() {
             placeholder="Search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-11 w-full rounded-l-full border px-5 text-base "
+            className="h-11 w-full rounded-l-full border  px-5"
           />
 
           <Link
             to={`/search/${search}`}
-            className="flex h-11 w-16  items-center justify-center rounded-r-full border"
+            className="flex h-11 w-16  items-center justify-center rounded-r-full border border-l-0"
           >
             <SavedSearchIcon />
           </Link>
         </div>
 
-        <div className="hidden h-10 w-10  items-center justify-center rounded-full border md:flex">
+        <div className="hidden h-10 w-10 items-center justify-center rounded-full bg-gray-200 font-semibold md:flex">
           <Link to="/profile">P</Link>
         </div>
       </div>
-      <div className="flex flex-col mt-5 mb-10 items-center">
-        {/* <Stack spacing={2}>
-          <Pagination
-            count={3}
-            color="primary"
-            onClick={() => setCurrentPage((prev) => prev - 1)}
-          />
-        </Stack> */}
-        <button onClick={() => setCurrentPage((prev) => prev - 1)}>Back</button>
-        <button onClick={() => setCurrentPage((prev) => prev + 1)}>Next</button>
-      </div>
-      <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 py-4 ">
-        {data.map((video: Video) => (
-          <Link to={`/video/${video.id}`}>
-            <Card sx={{ maxWidth: 345 }} key={video.id}>
-              <CardMedia
-                component="img"
-                alt="green iguana"
-                height="140"
-                image={
-                  `https://test-dev-sena.s3.ap-south-1.amazonaws.com/` +
-                  video.thumbnailKey
-                }
-                className="border rounded-2xl"
-              />
 
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
+      <div className="mt-6 flex items-center justify-center gap-4">
+        <button
+          onClick={handlePrev}
+          disabled={currentPage === 1}
+          className="rounded-full border px-5 py-2 text-sm font-medium"
+        >
+          Back
+        </button>
+
+        <button
+          onClick={handleNext}
+          className={`rounded-full border px-5 py-2 text-sm font-medium transition `}
+        >
+          Next
+        </button>
+      </div>
+
+      <div className="mt-8 grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {data.map((video) => (
+          <Link
+            to={`/video/${video.id}`}
+            key={video.id}
+            className="group block"
+          >
+            <Card
+              sx={{
+                maxWidth: "100%",
+                height: "100%",
+                boxShadow: "none",
+                borderRadius: "12px",
+                overflow: "hidden",
+              }}
+            >
+              <div className="overflow-hidden rounded-xl">
+                <CardMedia
+                  component="img"
+                  height="200"
+                  image={`https://test-dev-sena.s3.ap-south-1.amazonaws.com/${video.thumbnailKey}`}
+                  alt={video.title}
+                  className="h-52 w-full object-cover transition duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <CardContent sx={{ padding: "12px 4px" }}>
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: 600,
+                    lineHeight: 1.4,
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
                   {video.title}
                 </Typography>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+
+                <div className="mt-2 flex flex-col gap-1 text-sm text-gray-500">
+                  <span className="font-medium text-gray-700">
+                    {video.owner?.name}
+                  </span>
+
+                  <span>{video.category}</span>
+                </div>
+
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "text.secondary",
+                    marginTop: "6px",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
                   {video.description}
                 </Typography>
               </CardContent>
-              <div className="flex flex-row gap-30 px-4 font-thin text-sm">
-                <span>{video.owner?.name}</span>
-                <span>Category: {video.category}</span>
-              </div>
-              <CardActions></CardActions>
             </Card>
           </Link>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

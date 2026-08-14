@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 function UploadFile() {
+  const navigate = useNavigate();
   const [image, setImage] = useState<File | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [data, setData] = useState(false);
@@ -10,6 +12,8 @@ function UploadFile() {
   const [thumbnailKey, setThumbnailkey] = useState("");
   const [videoKey, setVideoKey] = useState("");
   const [category, setCategory] = useState("");
+  const [ImageUploaded, setImageUploaded] = useState(false);
+  const [VideoUploaded, setVideoUploaded] = useState(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const imageFile = e.target.files?.[0];
@@ -50,7 +54,8 @@ function UploadFile() {
         });
         const imagekey = res.url;
         console.log(imagekey);
-        setThumbnailkey(imagekey);
+        setThumbnailkey(data.data.key);
+        setImageUploaded(true);
       } else {
         console.log("err");
       }
@@ -67,6 +72,11 @@ function UploadFile() {
 
   const handleFileUpload = async (e: React.SyntheticEvent<EventTarget>) => {
     e.preventDefault();
+
+    if (!ImageUploaded) {
+      alert("Upload Image First...");
+      return;
+    }
 
     if (!file) {
       return;
@@ -175,6 +185,7 @@ function UploadFile() {
         setVideoKey(Completedata.data.videoKey);
         alert("File uploaded successfully");
         setFileUrl(Completedata.url);
+        setVideoUploaded(true);
       } catch (error) {
         console.log("error is : ", error);
       }
@@ -185,7 +196,19 @@ function UploadFile() {
 
   const handleUpload = async (e) => {
     e.preventDefault();
+
     const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+    }
+    if (!ImageUploaded) {
+      alert("Pls Upload Thumnail Image First...");
+      return;
+    }
+    if (!VideoUploaded) {
+      alert("Pls Upload Video First...");
+      return;
+    }
     const res = await fetch("https://yt-assesment.onrender.com/api/v1/videos", {
       method: "POST",
       headers: {
@@ -209,93 +232,91 @@ function UploadFile() {
     <div>
       <span className="text-xl font-thin mb-2">Upload Your New Video</span>
 
-      <div className="flex flex-col">
-        <div className="">
-          <form onSubmit={handleImageUpload}>
-            <label className="text-sm mb-2 mt-2 flex">Image</label>
-            <input
-              type="file"
-              id="file-input"
-              name="ImageStyle"
-              accept="image/jpeg,image/jpg,image/png"
-              className="border rounded-full px-2 w-60"
-              onChange={handleImageChange}
-            />
-            <br></br>
-            <button
-              type="submit"
-              className="border rounded
+      <div className="grid grid-cols-2 gap-y-3">
+        <form onSubmit={handleImageUpload}>
+          <label className="text-sm mb-2 mt-2 flex">Image</label>
+          <input
+            type="file"
+            id="file-input"
+            name="ImageStyle"
+            accept="image/jpeg,image/jpg,image/png"
+            className="border rounded-full px-2 w-60"
+            onChange={handleImageChange}
+          />
+          <br></br>
+          <button
+            type="submit"
+            className="border rounded
              mt-5 px-3 bg-emerald-300"
-            >
-              Upload Thumbnail Image
-            </button>
-            {data && <p className="mt-2  font-bold">Successfully Uploaded..</p>}
-          </form>
-          <form onSubmit={handleFileUpload}>
-            <label className="flex flex-col mt-2 mb-3 mt-5">Upload Video</label>
-            <input
-              type="file"
-              onChange={handleFileChange}
-              className="border rounded w-60 mt-5"
-            />
-            <br></br>
-            <button
-              disabled={!file}
-              type="submit"
-              className="border rounded
+          >
+            Upload Thumbnail Image
+          </button>
+          {data && <p className="mt-2  font-bold">Successfully Uploaded..</p>}
+        </form>
+        <form onSubmit={handleFileUpload}>
+          <label className="flex flex-col mt-2 mb-3 mt-5">Upload Video</label>
+          <input
+            type="file"
+            onChange={handleFileChange}
+            className="border rounded w-60 mt-5"
+          />
+          <br></br>
+          <button
+            disabled={!file}
+            type="submit"
+            className="border rounded
              mt-2 px-3 bg-emerald-300"
-            >
-              Upload
-            </button>
-            <hr />
-            <br />
-            <br />
-            {fileUrl && (
-              <a href={fileUrl} target="_blank" rel="noopener noreferrer">
-                View Uploaded File
-              </a>
-            )}
-          </form>
-          <form onSubmit={handleUpload}>
-            <label className="font-medium">Enter Title:</label>
+          >
+            Upload
+          </button>
+          <hr />
+          <br />
+          <br />
+          {fileUrl && (
+            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+              View Uploaded File
+            </a>
+          )}
+        </form>
+        <form onSubmit={handleUpload}>
+          <label className="font-medium">Enter Title:</label>
 
-            <input
-              type="text"
-              name="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="enter title"
-              className="border rounded-md px-3 py-2"
-            />
-            <br></br>
-            <br></br>
-            <label className="font-medium">Enter Description : </label>
+          <input
+            type="text"
+            name="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="enter title"
+            className="border rounded-md px-3 py-2"
+          />
+          <br></br>
+          <br></br>
+          <label className="font-medium">Enter Description : </label>
 
-            <input
-              type="text"
-              name="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="enter description"
-              className="border rounded-md px-3 py-2"
-            />
-            <br></br>
-            <br></br>
-            <label>Category is : </label>
-            <select
-              name="category"
-              value={category}
-              onChange={(event) => setCategory(event.target.value)}
-            >
-              <option id="0">MUSIC</option>
-              <option id="1">OTHER</option>
-            </select>
-            <br></br>
-            <button type="submit" className="mt-2 border border-1 bg-green-100">
-              Submit
-            </button>
-          </form>
-        </div>
+          <input
+            type="text"
+            name="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="enter description"
+            className="border rounded-md px-3 py-2"
+          />
+          <br></br>
+          <br></br>
+          <label>Category is : </label>
+          <select
+            name="category"
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+          >
+            <option id="0">MUSIC</option>
+            <option id="1">OTHER</option>
+          </select>
+          <br></br>
+          <button type="submit" className="mt-2 border border-1 bg-green-100">
+            Submit
+          </button>
+        </form>
       </div>
     </div>
   );

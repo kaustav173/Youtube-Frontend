@@ -42,38 +42,42 @@ function SearchPage() {
           <Link to="/profile">P</Link>
         </div>
       </div>
-      <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 py-4 ">
-        {data?.data.map((video: Video) => (
-          <Link to={`/video/${video.id}`}>
-            <Card sx={{ maxWidth: 345 }} key={video.id}>
-              <CardMedia
-                component="img"
-                alt="green iguana"
-                height="140"
-                image={
-                  `https://test-dev-sena.s3.ap-south-1.amazonaws.com/` +
-                  video.thumbnailKey
-                }
-                className="border rounded-2xl"
-              />
+      {text == "" ? (
+        <p>No Video</p>
+      ) : (
+        <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 py-4 ">
+          {data?.data.map((video: Video) => (
+            <Link to={`/video/${video.id}`}>
+              <Card sx={{ maxWidth: 345 }} key={video.id}>
+                <CardMedia
+                  component="img"
+                  alt="green iguana"
+                  height="140"
+                  image={
+                    `https://test-dev-sena.s3.ap-south-1.amazonaws.com/` +
+                    video.thumbnailKey
+                  }
+                  className="border rounded-2xl"
+                />
 
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  {video.title}
-                </Typography>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  {video.description}
-                </Typography>
-              </CardContent>
-              <div className="flex flex-row gap-30 px-4 font-thin text-sm">
-                <span>{video.owner?.name}</span>
-                <span>Category: {video.category}</span>
-              </div>
-              <CardActions></CardActions>
-            </Card>
-          </Link>
-        ))}
-      </ul>
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    {video.title}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                    {video.description}
+                  </Typography>
+                </CardContent>
+                <div className="flex flex-row gap-30 px-4 font-thin text-sm">
+                  <span>{video.owner?.name}</span>
+                  <span>Category: {video.category}</span>
+                </div>
+                <CardActions></CardActions>
+              </Card>
+            </Link>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import { refreshToken } from "./auth";
+
 interface IID {
   id: string;
 }
@@ -14,6 +16,9 @@ export const Allvideo = async (id: IID) => {
         },
       },
     );
+    if (res.status === 401) {
+      await refreshToken();
+    }
     const data = await res.json();
     console.log("recomm : ", data);
     return data.data;
@@ -35,6 +40,9 @@ export const GetAvideo = async (id: IID) => {
         },
       },
     );
+    if (res.status === 401) {
+      await refreshToken();
+    }
     const data = await res.json();
     return data.data;
   } catch (error) {
@@ -57,7 +65,6 @@ export const GetMyVideo = async () => {
       },
     );
 
-    console.log("my video", data.data.data);
     return data;
   } catch (error) {
     console.error(error);

@@ -7,6 +7,16 @@ import { Link } from "react-router";
 import Typography from "@mui/material/Typography";
 import { useParams } from "react-router";
 
+interface IVideo {
+  category: string;
+  commentCount: number;
+  description: string;
+  id: string;
+  title: string;
+  videoKey: string;
+  thumbnailKey: string;
+}
+
 function AllVideo() {
   const id = useParams();
   const { data, error, isPending } = useAllVideo(id.id);
@@ -23,7 +33,7 @@ function AllVideo() {
     <div className="px-2">
       <h1 className="text-2xl font-bold  mb-4">Recommended Videos</h1>
       <ul className="grid grid-cols-2">
-        {data.map((video) => (
+        {data.map((video: IVideo) => (
           <Link to={`/video/${video.id}`}>
             <Card sx={{ maxWidth: 345 }} key={video.id}>
               <CardMedia

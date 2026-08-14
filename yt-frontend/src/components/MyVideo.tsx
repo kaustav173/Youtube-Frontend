@@ -7,7 +7,7 @@ import { Link } from "react-router";
 import Typography from "@mui/material/Typography";
 import { useDeleteVideo } from "../hooks/useDeleteVideos";
 
-interface Video {
+interface IVideo {
   id: string;
   title: string;
   description: string;
@@ -21,7 +21,7 @@ interface Video {
 
 function MyVideo() {
   const { data, isFetching, error } = useMyVideo();
-  const mutation = useDeleteVideo(id);
+  const mutation = useDeleteVideo();
   if (isFetching) {
     return <div>is Fetching ....</div>;
   }
@@ -30,7 +30,7 @@ function MyVideo() {
     return <div>{error.message}</div>;
   }
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: IVideo) => {
     mutation.mutate(id);
   };
 
@@ -38,7 +38,7 @@ function MyVideo() {
     <div>
       <span className="text-2xl font-bold mb-4">My Video</span>
       <div className="mt-10 grid grid-cols-2 gap-6">
-        {data.data.map((video: Video) => (
+        {data.data.map((video: IVideo) => (
           <Card sx={{ maxWidth: 345 }} key={video.id}>
             <Link to={`/video/${video.id}`}>
               <CardMedia

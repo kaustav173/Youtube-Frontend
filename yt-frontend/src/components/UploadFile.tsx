@@ -163,7 +163,7 @@ function UploadFile() {
           console.log(uploadResponse.headers.get("etag"));
           parts.push({
             partNumber: partNumbers,
-            eTag: uploadResponse.headers.get("etag").replace(/['"]+/g, ""),
+            eTag: uploadResponse!.headers!.get("etag")!.replace(/['"]+/g, ""),
           });
         }
         console.log(parts);

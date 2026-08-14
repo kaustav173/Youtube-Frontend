@@ -106,75 +106,75 @@ function Login() {
     }
   };
 
-  // const refreshAccessToken = async (): Promise<string> => {
-  //   const refreshToken = localStorage.getItem("refreshToken");
+  const refreshAccessToken = async (): Promise<string> => {
+    const refreshToken = localStorage.getItem("refreshToken");
 
-  //   if (!refreshToken) {
-  //     throw new Error("Refresh token not found");
-  //   }
+    if (!refreshToken) {
+      throw new Error("Refresh token not found");
+    }
 
-  //   const res = await fetch(
-  //     "https://yt-assesment.onrender.com/api/v1/auth/refresh",
-  //     {
-  //       method: "POST",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         refreshToken,
-  //       }),
-  //     },
-  //   );
+    const res = await fetch(
+      "https://yt-assesment.onrender.com/api/v1/auth/refresh",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          refreshToken,
+        }),
+      },
+    );
 
-  //   if (!res.ok) {
-  //     localStorage.removeItem("token");
-  //     localStorage.removeItem("refreshToken");
-  //     throw new Error("Refresh token expired or revoked");
-  //   }
+    if (!res.ok) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+      throw new Error("Refresh token expired or revoked");
+    }
 
-  //   const { data } = await res.json();
+    const { data } = await res.json();
 
-  //   localStorage.setItem("token", data.accessToken);
+    localStorage.setItem("token", data.accessToken);
 
-  //   if (data.refreshToken) {
-  //     localStorage.setItem("refreshToken", data.refreshToken);
-  //   }
+    if (data.refreshToken) {
+      localStorage.setItem("refreshToken", data.refreshToken);
+    }
 
-  //   return data.accessToken;
-  // };
+    return data.accessToken;
+  };
 
-  // const apiFetch = async (url, options = {}) => {
-  //   let accessToken = localStorage.getItem("token");
+  const apiFetch = async (url, options = {}) => {
+    let accessToken = localStorage.getItem("token");
 
-  //   const makeRequest = async (token: string | null) => {
-  //     return fetch(url, {
-  //       ...options,
-  //       headers: {
-  //         ...options.headers,
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-  //   };
+    const makeRequest = async (token: string | null) => {
+      return fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    };
 
-  //   let res = await makeRequest(accessToken);
+    let res = await makeRequest(accessToken);
 
-  //   if (res.status === 401) {
-  //     try {
-  //       accessToken = await refreshAccessToken();
-  //       res = await makeRequest(accessToken);
-  //     } catch (error) {
-  //       localStorage.removeItem("token");
-  //       localStorage.removeItem("refreshToken");
-  //       navigate("/login");
-  //       throw error;
-  //     }
-  //   }
+    if (res.status === 401) {
+      try {
+        accessToken = await refreshAccessToken();
+        res = await makeRequest(accessToken);
+      } catch (error) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        navigate("/login");
+        throw error;
+      }
+    }
 
-  //   return res;
-  // };
+    return res;
+  };
 
   return (
     <div className="ml-5 flex items-center justify-center p-4 pt-30">
@@ -207,28 +207,6 @@ function Login() {
 
           <label className="font-medium">Enter your password:</label>
 
-          {/* <div className="relative flex">
-            <input
-              type={passwordV ? "text" : "password"}
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="border rounded-md px-3 py-2 w-full"
-              placeholder="enter your password"
-              required
-            />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              className="bi bi-eye flex justify-around items-center"
-              viewBox="0 0 16 16"
-            >
-              <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
-              <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
-            </svg>
-          </div> */}
           <div className="mb-4 flex border rounded-md px-2">
             <input
               type={type}

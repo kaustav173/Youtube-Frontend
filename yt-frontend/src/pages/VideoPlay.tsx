@@ -1,16 +1,21 @@
-import { Link, useParams } from "react-router";
+import { useParams } from "react-router";
 import { useAVideo } from "../hooks/useAVideo";
 import AllVideo from "../components/AllVideo";
 import { useEffect, useRef, useState } from "react";
 import Header from "../components/Header";
+import { AiFillLike } from "react-icons/ai";
+import { AiFillDislike } from "react-icons/ai";
+import { useReaction } from "../hooks/useReaction";
 
 function VideoPlay() {
   const id = useParams();
+  console.log(id.id);
 
   const { data, isFetching } = useAVideo(id);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const [pipMode, setPipMode] = useState(false);
+  const mutation = useReaction(id.id, "LIKE");
 
   useEffect(() => {
     const handleKeyDown = async (e: KeyboardEvent) => {
@@ -73,6 +78,10 @@ function VideoPlay() {
     return <div>Video not found</div>;
   }
 
+  const handleReaction = async (idr, type) => {
+    mutation.mutate(idr, type);
+  };
+
   return (
     <>
       <div className="px-3 py-3">
@@ -90,12 +99,25 @@ function VideoPlay() {
           />
 
           <div className="flex flex-col gap-4 mt-4">
-            <span className="border rounded-md px-3 py-2 font-bold text-3xl">
-              {data.title}
-            </span>
+            <span className="border rounded-md px-3 py-2  ">
+              <div className="flex flex-row gap-60">
+                <span className="font-bold text-3xl">{data.title}</span>
 
+                <AiFillLike
+                  className="mt-3"
+                  onClick={() => handleReaction(id.id, "LIKE")}
+                />
+                <AiFillDislike
+                  className="mt-3"
+                  onClick={() => handleReaction(id.id, "DISLIKE")}
+                />
+              </div>
+            </span>
             <span className="font-thin">{data.description}</span>
           </div>
+          <span>Like Count : {data.likeCount}</span>
+          <br></br>
+          <span>Dislike Count : {data.dislikeCount}</span>
         </div>
 
         <div className="overflow-y-auto h-screen [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">

@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { DeleteVideo } from "../api/videofetch";
+import { likeCount } from "../api/videoCount";
 
-export function useDeleteVideo() {
+export function useReaction(id, type) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: DeleteVideo,
+    mutationFn: () => likeCount(id, type),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["myvideo"],
+        queryKey: ["video"],
       });
     },
   });

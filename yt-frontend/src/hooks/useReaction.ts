@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { likeCount } from "../api/videoCount";
 
-export function useReaction(id, type) {
+type ReactionVars = { id: string; type: string };
+
+export function useReaction() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => likeCount(id, type),
+    mutationFn: ({ id, type }: ReactionVars) => likeCount(id, type),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["video"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["video"] });
     },
   });
 }

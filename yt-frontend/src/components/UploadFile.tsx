@@ -93,13 +93,13 @@ function UploadFile() {
       const fileName = file.name;
       const fileType = file.type;
       const fileSize = file.size;
-      let uploadId = "";
       const parts: {
-        url: string;
-        PartNumber: number;
-        etag: string;
+        // url: string;
+        partNumber: number;
+        eTag: string;
       }[] = [];
       try {
+        let uploadId = "";
         const startUploadResponse = await fetch(
           "https://yt-assesment.onrender.com/api/v1/uploads/videos/initiate",
           {

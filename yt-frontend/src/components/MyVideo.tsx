@@ -30,7 +30,7 @@ function MyVideo() {
     return <div>{error.message}</div>;
   }
 
-  const handleDelete = async (id: IVideo) => {
+  const handleDelete = async (id: string) => {
     mutation.mutate(id);
   };
 

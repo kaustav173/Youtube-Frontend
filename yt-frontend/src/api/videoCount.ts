@@ -1,4 +1,4 @@
-export const likeCount = async (id, type) => {
+export const likeCount = async (id: string, type: string) => {
   const token = localStorage.getItem("token");
   console.log(id, type);
   try {

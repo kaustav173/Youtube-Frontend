@@ -5,17 +5,17 @@ import { useEffect, useRef, useState } from "react";
 import Header from "../components/Header";
 import { AiFillLike } from "react-icons/ai";
 import { AiFillDislike } from "react-icons/ai";
-import { useReaction } from "../hooks/useReaction";
+// import { useReaction } from "../hooks/useReaction";
 
 function VideoPlay() {
-  const id = useParams();
-  console.log(id.id);
+  const { id } = useParams<{ id: string }>();
 
   const { data, isFetching } = useAVideo(id);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const [pipMode, setPipMode] = useState(false);
-  const mutation = useReaction(id.id, "LIKE");
+  // const mutation = useReaction(id.id, "LIKE");
+  console.log(pipMode);
 
   useEffect(() => {
     const handleKeyDown = async (e: KeyboardEvent) => {
@@ -78,9 +78,9 @@ function VideoPlay() {
     return <div>Video not found</div>;
   }
 
-  const handleReaction = async (idr, type) => {
-    mutation.mutate(idr, type);
-  };
+  // const handleReaction = async (idr: string, type: string) => {
+  //   mutation.mutate(idr, type);
+  // };
 
   return (
     <>
@@ -105,11 +105,11 @@ function VideoPlay() {
 
                 <AiFillLike
                   className="mt-3"
-                  onClick={() => handleReaction(id.id, "LIKE")}
+                  // onClick={() => handleReaction(id.id, "LIKE")}
                 />
                 <AiFillDislike
                   className="mt-3"
-                  onClick={() => handleReaction(id.id, "DISLIKE")}
+                  // onClick={() => handleReaction(id.id, "DISLIKE")}
                 />
               </div>
             </span>

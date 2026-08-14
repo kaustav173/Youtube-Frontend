@@ -3,10 +3,9 @@ import { refreshToken } from "./auth";
 interface IID {
   id: string;
 }
-export const Allvideo = async (id: IID) => {
+export const Allvideo = async (id: string) => {
   const token = localStorage.getItem("token");
   try {
-    console.log(id.id);
     const res: Response = await fetch(
       `https://yt-assesment.onrender.com/api/v1/videos/${id}/recommended`,
       {
@@ -94,7 +93,7 @@ export const SearchVideo = async (text: string) => {
   }
 };
 
-export const DeleteVideo = async (id: IID) => {
+export const DeleteVideo = async (id: string) => {
   const token = localStorage.getItem("token");
   try {
     const res = await fetch(

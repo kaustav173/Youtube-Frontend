@@ -18,8 +18,8 @@ interface IVideo {
 }
 
 function AllVideo() {
-  const id = useParams();
-  const { data, error, isPending } = useAllVideo(id.id);
+  const { id } = useParams<{ id: string }>();
+  const { data, error, isPending } = useAllVideo(id);
 
   if (error) {
     return <div>{error.message}</div>;

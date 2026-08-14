@@ -1,13 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { GetAvideo } from "../api/videofetch";
 
-interface IID {
-  id: string;
-}
-export function useAVideo(id: IID) {
+export function useAVideo(id?: string) {
   return useQuery({
     queryKey: ["video", id],
-    queryFn: () => GetAvideo(id),
+    queryFn: () => GetAvideo({ id: id as string }),
     enabled: !!id,
   });
 }

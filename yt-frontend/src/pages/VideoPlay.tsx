@@ -67,7 +67,7 @@ function VideoPlay() {
       </div>
 
       <div className="grid grid-cols-2 px-3 gap-5 mt-6 justify-center">
-        <div className="overflow-hidden h-screen">
+        <div className="h-screen">
           <video
             ref={videoRef}
             controls

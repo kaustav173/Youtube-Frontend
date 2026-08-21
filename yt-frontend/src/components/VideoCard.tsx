@@ -1,46 +1,87 @@
-// import Card from "@mui/material/Card";
-// import CardActions from "@mui/material/CardActions";
-// import CardContent from "@mui/material/CardContent";
-// import CardMedia from "@mui/material/CardMedia";
-// import Button from "@mui/material/Button";
-// import Typography from "@mui/material/Typography";
+import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router";
+import { useStore } from "../store/store";
 
-// interface IVideo {
-//   video: {
-//     category: string;
-//     commentCount: number;
-//     description: string;
-//     id: string;
-//     title: string;
-//     videoKey: string;
-//     thumbnailKey: string;
-//   };
-// }
+const MiniCard = () => {
+  const videoRef = useRef(null);
+  const navigate = useNavigate();
 
-// export function VideoCard(video: IVideo) {
-//   console.log(video.video.thumbnailKey);
-//   return (
-//     <Card sx={{ maxWidth: 345 }}>
-//       <CardMedia
-//         sx={{ height: 140 }}
-//         image={
-//           `https://test-dev-sena.s3.ap-south-1.amazonaws.com/` +
-//           video.video.thumbnailKey
-//         }
-//         title="green iguana"
-//       />
-//       <CardContent>
-//         <Typography gutterBottom variant="h5" component="div">
-//           {video}
-//         </Typography>
-//         <Typography variant="body2" sx={{ color: "text.secondary" }}>
-//           {video}
-//         </Typography>
-//       </CardContent>
-//       <CardActions>
-//         <Button size="small">Share</Button>
-//         <Button size="small">Learn More</Button>
-//       </CardActions>
-//     </Card>
-//   );
-// }
+  const {
+    pipMode,
+    setPipMode,
+    pipVideoId,
+    pipVideoUrl,
+    pipVideoTitle,
+    pipCurrentTime,
+    setPipCurrentTime,
+    pipVideoChannelName,
+  } = useStore();
+
+  useEffect(() => {
+    if (!pipMode) {
+      return;
+    }
+
+    if (!videoRef.current) {
+      return;
+    }
+
+    const video = videoRef.current;
+
+    video.currentTime = pipCurrentTime;
+
+    video.play();
+  }, [pipMode, pipVideoUrl, pipCurrentTime]);
+
+  useEffect(() => {
+    if (!pipMode) {
+      return;
+    }
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() !== "i") {
+        return;
+      }
+      if (!videoRef.current) {
+        return;
+      }
+      setPipCurrentTime(videoRef.current.currentTime);
+      setPipMode(false);
+      navigate(`/video/${pipVideoId}`);
+    };
+
+    window.addEventListener("keydown", handleKey);
+
+    return () => {
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [pipMode, pipVideoId, navigate, setPipCurrentTime, setPipMode]);
+
+  if (!pipMode) {
+    return null;
+  }
+
+  return (
+    <div className="fixed bottom-[30px] right-[30px] z-9999 w-[400px] h-[300px] rounded-2xl shadow-[0_8px_6px_-6px_rgba(0,0,0,1)] bg-white">
+      <div className="flex flex-col">
+        <video
+          ref={videoRef}
+          className="w-[400px] h-[230px] rounded-t-2xl"
+          controls
+          src={pipVideoUrl}
+        />
+
+        <div className="px-[15px]">
+          <p className="mt-[10px] h-[25px] overflow-hidden font-bold">
+            {pipVideoTitle}
+          </p>
+
+          <p className="text-gray-500">{pipVideoChannelName}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default MiniCard;
+ 

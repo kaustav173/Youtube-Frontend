@@ -6,6 +6,7 @@ import Header from "../components/Header";
 import { AiFillLike, AiFillDislike } from "react-icons/ai";
 import { useReaction } from "../hooks/useReaction";
 import Comments from "../components/Comments";
+import { useStore } from "../store/store";
 
 function VideoPlay() {
   const { id } = useParams<{ id: string }>();
@@ -13,7 +14,15 @@ function VideoPlay() {
   const mutation = useReaction();
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  // const [pipMode, setPipMode] = useState(false);
+  
+  const {
+    setPipMode,
+    setPipVideoId,
+    setPipVideoUrl,
+    setPipVideoTitle,
+    setPipVideoChannelName,
+    setPipCurrentTime,
+  } = useStore();
 
   const handleReaction = (type: "LIKE" | "DISLIKE") => {
     if (!id) return;
@@ -22,27 +31,39 @@ function VideoPlay() {
 
   useEffect(() => {
     const handleKeyDown = async (e: KeyboardEvent) => {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      )
+        return;
       if (e.key.toLowerCase() !== "i") return;
+      
       const video = videoRef.current;
       if (!video) return;
+      if (!data) return;
 
-      try {
-        if (document.pictureInPictureElement) {
-          await document.exitPictureInPicture();
-          return;
-        }
+      e.preventDefault();
 
-        if (document.pictureInPictureEnabled) {
-          await video.requestPictureInPicture();
-        }
-      } catch (error) {
-        console.error("PiP error:", error);
-      }
+      setPipVideoId(id || "");
+      setPipVideoUrl(`https://test-dev-sena.s3.ap-south-1.amazonaws.com/${data.videoKey}`);
+      setPipVideoTitle(data.title);
+      setPipVideoChannelName(data.owner?.name || "");
+      setPipCurrentTime(video.currentTime);
+      setPipMode(true);
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [
+    data,
+    id,
+    setPipMode,
+    setPipVideoId,
+    setPipVideoUrl,
+    setPipVideoTitle,
+    setPipVideoChannelName,
+    setPipCurrentTime,
+  ]);
 
   // useEffect(() => {
   //   // const handleEnterPiP = () => setPipMode(true);

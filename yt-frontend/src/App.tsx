@@ -6,18 +6,23 @@ import VideoPlay from "./pages/VideoPlay";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
 import SearchPage from "./pages/SearchPage";
+import { StoreProvider } from "./store/store";
+import MiniCard from "./components/VideoCard";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Login />} />
-      <Route element={<ProtectedRoute />}>
-        <Route path="/home" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/video/:id" element={<VideoPlay />} />
-        <Route path="/search/:text" element={<SearchPage />} />
-      </Route>
-    </Routes>
+    <StoreProvider>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/home" element={<Home />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/video/:id" element={<VideoPlay />} />
+          <Route path="/search/:text" element={<SearchPage />} />
+        </Route>
+      </Routes>
+      <MiniCard />
+    </StoreProvider>
   );
 }
 
